@@ -14,24 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alibaba.dubbo.demo.provider;
-
-import com.alibaba.dubbo.demo.service.DemoService;
-
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.io.IOException;
+package org.apache.dubbo.registry.nacos;
 
 /**
- * {@link DemoService} provider demo XML bootstrap
+ * {@link NacosRegistry} Test
+ *
+ * @since 2.7.0
  */
-public class DemoServiceProviderXmlBootstrap {
+public class NacosRegistryTest {
 
-    public static void main(String[] args) throws IOException {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
-        context.setConfigLocation("/META-INF/spring/dubbo-provider-context.xml");
-        context.refresh();
-        System.out.println("DemoService provider (XML) is starting...");
-        System.in.read();
+    // Test case Dubbo OPS :
+    // URL : admin://30.5.124.12?category=providers,consumers,routers,configurators&check=false&classifier=*&enabled=*&group=*&interface=*&version=*
+    public void testDoSubscribeForDubboOps() {
+
     }
+
 }

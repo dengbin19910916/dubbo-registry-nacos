@@ -14,32 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alibaba.dubbo.demo.service;
-
-import com.alibaba.dubbo.config.annotation.Service;
-import com.alibaba.dubbo.rpc.RpcContext;
-
-import org.springframework.beans.factory.annotation.Value;
-
+package org.apache.dubbo.demo.service;
 
 /**
- * Default {@link DemoService}
+ * DemoService
  *
- * @since 2.6.5
+ * @since 2.7.0
  */
-@Service(version = "${demo.service.version}")
-public class DefaultService implements DemoService {
+public interface DemoService {
 
-    @Value("${demo.service.name}")
-    private String serviceName;
+    String sayName(String name);
 
-    public String sayName(String name) {
-        RpcContext rpcContext = RpcContext.getContext();
-        return String.format("Service [name :%s , port : %d] %s(\"%s\") : Hello,%s",
-                serviceName,
-                rpcContext.getLocalPort(),
-                rpcContext.getMethodName(),
-                name,
-                name);
-    }
 }

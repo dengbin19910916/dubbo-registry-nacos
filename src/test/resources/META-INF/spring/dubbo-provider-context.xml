@@ -14,8 +14,8 @@
     <dubbo:protocol name="dubbo" port="-1"/>
 
     <!-- 声明需要暴露的服务接口 -->
-    <dubbo:service interface="com.alibaba.dubbo.demo.service.DemoService" ref="demoService" version="2.0.0"/>
+    <dubbo:service interface="org.apache.dubbo.demo.service.DemoService" ref="demoService" version="2.0.0"/>
 
     <!-- 和本地bean一样实现服务 -->
-    <bean id="demoService" class="com.alibaba.dubbo.demo.service.DefaultService"/>
+    <bean id="demoService" class="org.apache.dubbo.demo.service.DefaultService"/>
 </beans>

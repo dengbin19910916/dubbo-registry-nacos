@@ -14,35 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alibaba.dubbo.registry.nacos;
+package org.apache.dubbo.registry.nacos;
 
-import com.alibaba.dubbo.common.URL;
-import com.alibaba.dubbo.registry.Registry;
-import com.alibaba.dubbo.registry.RegistryFactory;
-import com.alibaba.dubbo.registry.support.AbstractRegistryFactory;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.client.naming.utils.StringUtils;
-
+import org.apache.dubbo.common.URL;
+import org.apache.dubbo.registry.Registry;
+import org.apache.dubbo.registry.RegistryFactory;
+import org.apache.dubbo.registry.support.AbstractRegistryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
-import static com.alibaba.dubbo.common.Constants.BACKUP_KEY;
-import static com.alibaba.nacos.api.PropertyKeyConst.ACCESS_KEY;
-import static com.alibaba.nacos.api.PropertyKeyConst.CLUSTER_NAME;
-import static com.alibaba.nacos.api.PropertyKeyConst.ENDPOINT;
-import static com.alibaba.nacos.api.PropertyKeyConst.NAMESPACE;
-import static com.alibaba.nacos.api.PropertyKeyConst.SECRET_KEY;
-import static com.alibaba.nacos.api.PropertyKeyConst.SERVER_ADDR;
+import static com.alibaba.nacos.api.PropertyKeyConst.*;
 import static com.alibaba.nacos.client.naming.utils.UtilAndComs.NACOS_NAMING_LOG_NAME;
+import static org.apache.dubbo.common.Constants.BACKUP_KEY;
 
 /**
  * Nacos {@link RegistryFactory}
  *
- * @since 2.6.5
+ * @since 2.7.0
  */
 public class NacosRegistryFactory extends AbstractRegistryFactory {
 
@@ -54,7 +48,7 @@ public class NacosRegistryFactory extends AbstractRegistryFactory {
 
     private NamingService buildNamingService(URL url) {
         Properties nacosProperties = buildNacosProperties(url);
-        NamingService namingService = null;
+        NamingService namingService;
         try {
             namingService = NacosFactory.createNamingService(nacosProperties);
         } catch (NacosException e) {

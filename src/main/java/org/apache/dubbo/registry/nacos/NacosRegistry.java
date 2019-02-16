@@ -14,15 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alibaba.dubbo.registry.nacos;
+package org.apache.dubbo.registry.nacos;
 
-import com.alibaba.dubbo.common.Constants;
-import com.alibaba.dubbo.common.URL;
-import com.alibaba.dubbo.common.utils.NetUtils;
-import com.alibaba.dubbo.common.utils.UrlUtils;
-import com.alibaba.dubbo.registry.NotifyListener;
-import com.alibaba.dubbo.registry.Registry;
-import com.alibaba.dubbo.registry.support.FailbackRegistry;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.Event;
@@ -30,29 +23,22 @@ import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.api.naming.pojo.ListView;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.common.Constants;
+import org.apache.dubbo.common.URL;
+import org.apache.dubbo.common.utils.NetUtils;
+import org.apache.dubbo.common.utils.UrlUtils;
+import org.apache.dubbo.registry.NotifyListener;
+import org.apache.dubbo.registry.Registry;
+import org.apache.dubbo.registry.support.FailbackRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
-import static com.alibaba.dubbo.common.Constants.CONFIGURATORS_CATEGORY;
-import static com.alibaba.dubbo.common.Constants.CONSUMERS_CATEGORY;
-import static com.alibaba.dubbo.common.Constants.PROVIDERS_CATEGORY;
-import static com.alibaba.dubbo.common.Constants.ROUTERS_CATEGORY;
+import static org.apache.dubbo.common.Constants.*;
 
 /**
  * Nacos {@link Registry}
@@ -60,7 +46,7 @@ import static com.alibaba.dubbo.common.Constants.ROUTERS_CATEGORY;
  * @see #SERVICE_NAME_SEPARATOR
  * @see #PAGINATION_SIZE
  * @see #LOOKUP_INTERVAL
- * @since 2.6.5
+ * @since 2.7.0
  */
 public class NacosRegistry extends FailbackRegistry {
 
@@ -140,7 +126,8 @@ public class NacosRegistry extends FailbackRegistry {
         return urls;
     }
 
-    protected void doRegister(URL url) {
+    @Override
+    public void doRegister(URL url) {
         final String serviceName = getServiceName(url);
         final Instance instance = createInstance(url);
         execute(new NamingServiceCallback() {
@@ -150,7 +137,8 @@ public class NacosRegistry extends FailbackRegistry {
         });
     }
 
-    protected void doUnregister(final URL url) {
+    @Override
+    public void doUnregister(final URL url) {
         execute(new NamingServiceCallback() {
             public void callback(NamingService namingService) throws NacosException {
                 String serviceName = getServiceName(url);
@@ -160,7 +148,8 @@ public class NacosRegistry extends FailbackRegistry {
         });
     }
 
-    protected void doSubscribe(final URL url, final NotifyListener listener) {
+    @Override
+    public void doSubscribe(final URL url, final NotifyListener listener) {
         List<String> serviceNames = getServiceNames(url, listener);
         doSubscribe(url, listener, serviceNames);
     }
@@ -179,7 +168,7 @@ public class NacosRegistry extends FailbackRegistry {
     }
 
     @Override
-    protected void doUnsubscribe(URL url, NotifyListener listener) {
+    public void doUnsubscribe(URL url, NotifyListener listener) {
         if (isAdminProtocol(url)) {
             shutdownServiceNamesLookup();
         }
@@ -327,12 +316,9 @@ public class NacosRegistry extends FailbackRegistry {
                 }
 
                 String group = length > 3 ? segments[SERVICE_GROUP_INDEX] : null;
-                if (group != null && !WILDCARD.equals(targetGroup)
-                        && !StringUtils.equals(targetGroup, group)) {  // no match service group
-                    return false;
-                }
-
-                return true;
+                // no match service group
+                return group == null || WILDCARD.equals(targetGroup)
+                        || StringUtils.equals(targetGroup, group);
             }
         });
     }
@@ -414,11 +400,10 @@ public class NacosRegistry extends FailbackRegistry {
     }
 
     private URL buildURL(Instance instance) {
-        URL url = new URL(instance.getMetadata().get(Constants.PROTOCOL_KEY),
+        return new URL(instance.getMetadata().get(Constants.PROTOCOL_KEY),
                 instance.getIp(),
                 instance.getPort(),
                 instance.getMetadata());
-        return url;
     }
 
     private Instance createInstance(URL url) {
@@ -482,7 +467,7 @@ public class NacosRegistry extends FailbackRegistry {
     /**
      * A filter for Nacos data
      *
-     * @since 2.6.5
+     * @since 2.7.0
      */
     private interface NacosDataFilter<T> {
 
@@ -500,7 +485,7 @@ public class NacosRegistry extends FailbackRegistry {
     /**
      * {@link NamingService} Callback
      *
-     * @since 2.6.5
+     * @since 2.7.0
      */
     interface NamingServiceCallback {
 
@@ -508,7 +493,7 @@ public class NacosRegistry extends FailbackRegistry {
          * Callback
          *
          * @param namingService {@link NamingService}
-         * @throws NacosException
+         * @throws NacosException Nacos Exception
          */
         void callback(NamingService namingService) throws NacosException;
 
